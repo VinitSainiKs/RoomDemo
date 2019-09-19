@@ -6,24 +6,32 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var noteListAdapter: NoteListAdapter
+
     private val TAG = this.javaClass.simpleName
     private val NEW_NOTE_ACTIVITY_REQUEST_CODE = 1
     lateinit var noteViewModel: NoteViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
-
         setSupportActionBar(toolbar)
+
+        noteViewModel.getAllNotes().observe(this, androidx.lifecycle.Observer<List<Note>>{
+            println("it ---->> $it")
+
+            noteListAdapter = NoteListAdapter(this, it)
+            recyclerview.adapter = noteListAdapter
+            recyclerview.layoutManager = LinearLayoutManager(this)
+        })
 
         fab.setOnClickListener { view ->
             val intent = Intent(this, NewNoteActivity::class.java)

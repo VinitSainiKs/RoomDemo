@@ -4,13 +4,19 @@ import android.app.Application
 import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = this.javaClass.simpleName
     var noteDao = NoteRoomDatabase.getDatabase(application).noteDao()
+    val mAllNotes =noteDao.getAllNotes()
 
     fun insert(note: Note){
         InsertAsyncTask(noteDao).execute(note)
+    }
+
+    fun getAllNotes(): LiveData<List<Note>>{
+        return mAllNotes
     }
 
     override fun onCleared() {
